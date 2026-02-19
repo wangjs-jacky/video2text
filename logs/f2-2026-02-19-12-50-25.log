@@ -1,0 +1,13 @@
+2026-02-19 12:50:26,425 - f2 - INFO - 应用：douyin
+2026-02-19 12:50:26,432 - f2 - INFO - 模式：one
+2026-02-19 12:50:26,433 - f2 - INFO - 主配置路径：/opt/anaconda3/lib/python3.11/site-packages/f2/conf/app.yaml
+2026-02-19 12:50:26,433 - f2 - INFO - 自定义配置路径：/opt/anaconda3/lib/python3.11/site-packages/f2/conf/app.yaml
+2026-02-19 12:50:27,451 - f2 - INFO - 处理作品: 7224171356244544828 数据
+2026-02-19 12:50:30,942 - f2 - ERROR - HTTP状态错误：Client error '405 Method Not Allowed' for url 'https://api.day.app/'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/405, URL：https://api.day.app/, 尝试次数：1
+2026-02-19 12:50:30,945 - f2 - ERROR - 请前往QA文档 https://f2.wiki/faq 查看相关帮助
+2026-02-19 12:50:30,946 - f2 - ERROR - Bark 通知发送失败，请检查 key 和网络连接：HTTP状态码错误： Status Code: 405
+2026-02-19 12:50:31,666 - f2 - WARNING - 未提供日期区间参数
+2026-02-19 12:50:31,967 - f2 - ERROR - HTTP状态错误: https://v26-web.douyinvod.com/d8dd577dd5f1a5e511c04d1fe0ac6ee1/6996c0f9/video/tos/cn/tos-cn-ve-0015c800/oQWfCenX9AAaJEpsbBDIuhBA5QZgmQFZQkbdjp/?a=6383&ch=26&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=848&bt=848&cs=0&ds=4&ft=pEaFx4hZffPdr5~-vv2NvAq-antLjrK2Z-gnRka6WMr_ljVhWL6&mime_type=video_mp4&qs=0&rc=NDU5ZmRlO2Y3OjNnNTc2OkBpajY4dTs6ZnVwazMzNGkzM0A0YTMzNjUxNWAxNS8vNS0vYSNiZ2djcjQwZC1gLS1kLS9zcw%3D%3D&btag=c0000e00020000&cquery=100w_100B_100H_100K_100o&dy_q=1771476627&feature_id=f0150a16a324336cda5d6dd0b69ed299&l=20260219125027725A92C66F9A8A497222, 状态码: 404
+2026-02-19 12:50:31,969 - f2 - WARNING - 链接 https://v26-web.douyinvod.com/d8dd577dd5f1a5e511c04d1fe0ac6ee1/6996c0f9/video/tos/cn/tos-cn-ve-0015c800/oQWfCenX9AAaJEpsbBDIuhBA5QZgmQFZQkbdjp/?a=6383&ch=26&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C3&cv=1&br=848&bt=848&cs=0&ds=4&ft=pEaFx4hZffPdr5~-vv2NvAq-antLjrK2Z-gnRka6WMr_ljVhWL6&mime_type=video_mp4&qs=0&rc=NDU5ZmRlO2Y3OjNnNTc2OkBpajY4dTs6ZnVwazMzNGkzM0A0YTMzNjUxNWAxNS8vNS0vYSNiZ2djcjQwZC1gLS1kLS9zcw%3D%3D&btag=c0000e00020000&cquery=100w_100B_100H_100K_100o&dy_q=1771476627&feature_id=f0150a16a324336cda5d6dd0b69ed299&l=20260219125027725A92C66F9A8A497222 响应大小为 0 字节，尝试下一个链接是否可用
+2026-02-19 12:50:38,810 - f2 - INFO - [green][  完成  ]：2023-04-21 00-34-46_如何有效解决OpenAI_ChatGPT各种网络......atgpt应用领域_#chatgpt怎么下载使用_video.mp4[/green]

@@ -1,0 +1,11 @@
+2026-02-19 16:21:48,131 - f2 - INFO - 应用：douyin
+2026-02-19 16:21:48,138 - f2 - INFO - 模式：one
+2026-02-19 16:21:48,138 - f2 - INFO - 主配置路径：/opt/anaconda3/lib/python3.11/site-packages/f2/conf/app.yaml
+2026-02-19 16:21:48,139 - f2 - INFO - 自定义配置路径：/opt/anaconda3/lib/python3.11/site-packages/f2/conf/app.yaml
+2026-02-19 16:21:49,000 - f2 - INFO - 处理作品: 7600039745149865243 数据
+2026-02-19 16:21:52,322 - f2 - ERROR - HTTP状态错误：Client error '405 Method Not Allowed' for url 'https://api.day.app/'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/405, URL：https://api.day.app/, 尝试次数：1
+2026-02-19 16:21:52,326 - f2 - ERROR - 请前往QA文档 https://f2.wiki/faq 查看相关帮助
+2026-02-19 16:21:52,328 - f2 - ERROR - Bark 通知发送失败，请检查 key 和网络连接：HTTP状态码错误： Status Code: 405
+2026-02-19 16:21:53,089 - f2 - WARNING - 未提供日期区间参数
+2026-02-19 16:22:09,452 - f2 - INFO - [green][  完成  ]：2026-01-27 21-57-11_AI程序化交易实践_盈利率3_7_这算什么水平_......_#HyperAlphaArena_#ai创业者_video.mp4[/green]

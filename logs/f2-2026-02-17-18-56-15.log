@@ -1,0 +1,11 @@
+2026-02-17 18:56:16,234 - f2 - INFO - 应用：douyin
+2026-02-17 18:56:16,241 - f2 - INFO - 模式：one
+2026-02-17 18:56:16,241 - f2 - INFO - 主配置路径：/opt/anaconda3/lib/python3.11/site-packages/f2/conf/app.yaml
+2026-02-17 18:56:16,242 - f2 - INFO - 自定义配置路径：/opt/anaconda3/lib/python3.11/site-packages/f2/conf/app.yaml
+2026-02-17 18:56:17,203 - f2 - INFO - 处理作品: 7595594238893840886 数据
+2026-02-17 18:56:20,527 - f2 - ERROR - HTTP状态错误：Client error '405 Method Not Allowed' for url 'https://api.day.app/'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/405, URL：https://api.day.app/, 尝试次数：1
+2026-02-17 18:56:20,529 - f2 - ERROR - 请前往QA文档 https://f2.wiki/faq 查看相关帮助
+2026-02-17 18:56:20,531 - f2 - ERROR - Bark 通知发送失败，请检查 key 和网络连接：HTTP状态码错误： Status Code: 405
+2026-02-17 18:56:21,310 - f2 - WARNING - 未提供日期区间参数
+2026-02-17 18:56:21,311 - f2 - INFO - [cyan][  跳过  ]: 2026-01-15 22-24-56_当你觉察到自己状态不对的时候_一定要想办法拉自己......己一把_#个人成长#认知觉醒_#人生感悟_#励志_video.mp4[/cyan]
