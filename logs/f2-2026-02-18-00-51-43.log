@@ -1,5 +1,0 @@
-2026-02-18 00:51:43,469 - f2 - INFO - 应用：douyin
-2026-02-18 00:51:43,475 - f2 - INFO - 模式：one
-2026-02-18 00:51:43,476 - f2 - INFO - 主配置路径：/opt/anaconda3/lib/python3.11/site-packages/f2/conf/app.yaml
-2026-02-18 00:51:43,476 - f2 - INFO - 自定义配置路径：/opt/anaconda3/lib/python3.11/site-packages/f2/conf/app.yaml
-2026-02-18 00:51:44,323 - f2 - ERROR - 请前往QA文档 https://f2.wiki/faq 查看相关帮助

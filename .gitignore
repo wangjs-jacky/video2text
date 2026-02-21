@@ -5,3 +5,7 @@ output/
 *.mp3
 *.wav
 .env
+
+# f2 工具生成的缓存文件
+logs/
+*.db
