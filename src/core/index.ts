@@ -5,4 +5,6 @@ export { formatResult } from './formatter.js';
 export { extractText } from './extractor.js';
 export { checkAllDependencies, checkDependency, printDependencyStatus } from './dependency-check.js';
 export { parseDouyinUrl, validateAndSuggest } from './url-parser.js';
+export { getDouyinCookiesFromChrome, canAutoExtractCookies, getBrowserName } from './cookie-extractor.js';
 export type { ParsedUrl } from './url-parser.js';
+export type { CookieExtractResult } from './cookie-extractor.js';

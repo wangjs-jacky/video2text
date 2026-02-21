@@ -3,7 +3,15 @@ import * as p from '@clack/prompts';
 import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { extractText, checkAllDependencies, printDependencyStatus, DownloadError } from '../core/index.js';
+import {
+  extractText,
+  checkAllDependencies,
+  printDependencyStatus,
+  DownloadError,
+  getDouyinCookiesFromChrome,
+  canAutoExtractCookies,
+  getBrowserName,
+} from '../core/index.js';
 import type { OutputFormat } from '../types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -29,6 +37,8 @@ export async function runCli() {
     .option('--file <file>', '批量处理的链接文件')
     .option('-k, --keep', '保留临时文件', { default: false })
     .option('-c, --cookie <cookie>', '抖音 Cookie（用于需要登录的视频）')
+    .option('--auto-cookie', '自动从浏览器获取 Cookie（默认开启）', { default: true })
+    .option('--no-auto-cookie', '禁用自动获取 Cookie')
     .action(async (url, options) => {
       // 检测依赖
       const deps = await checkAllDependencies();
@@ -111,35 +121,104 @@ export async function runCli() {
               p.log.info('='.repeat(60) + '\n');
             }
 
-            // 如果需要认证，提示使用 --cookie 参数
+            // 如果需要认证，自动从浏览器获取 Cookie
             if (error.needsAuth && !options.cookie) {
-              const shouldProvideCookie = await p.confirm({
-                message: '是否现在提供Cookie？',
-                initialValue: false
-              });
+              // 检查是否支持自动获取
+              if (canAutoExtractCookies()) {
+                // 如果开启了自动获取，直接获取
+                if (options.autoCookie) {
+                  spinner.start('正在从浏览器获取 Cookie...');
+                  const cookieResult = await getDouyinCookiesFromChrome();
 
-              if (shouldProvideCookie && !p.isCancel(shouldProvideCookie)) {
-                const cookieInput = await p.text({
-                  message: '请粘贴Cookie内容',
-                  placeholder: '粘贴从浏览器复制的Cookie...'
-                });
+                  if (cookieResult.success && cookieResult.cookies) {
+                    spinner.stop('✓ Cookie 获取成功');
 
-                if (cookieInput && !p.isCancel(cookieInput)) {
-                  // 使用提供的Cookie重试
-                  spinner.start('正在使用Cookie重试...');
-                  const retryResult = await extractText({
-                    url: currentUrl,
-                    outputFormat: format,
-                    outputDir: options.output,
-                    keepTempFiles: options.keep,
-                    cookies: cookieInput as string,
-                    modelName: options.model,
+                    // 使用获取到的 Cookie 重试
+                    spinner.start('正在使用 Cookie 重试...');
+                    const retryResult = await extractText({
+                      url: currentUrl,
+                      outputFormat: format,
+                      outputDir: options.output,
+                      keepTempFiles: options.keep,
+                      cookies: cookieResult.cookies,
+                      modelName: options.model,
+                    });
+
+                    if (retryResult.success) {
+                      spinner.stop(`✓ 完成: ${retryResult.outputPath}`);
+                    } else {
+                      spinner.stop(`✗ 重试失败: ${retryResult.error}`);
+                    }
+                  } else {
+                    spinner.stop(`✗ ${cookieResult.error}`);
+                    p.log.info('请确保已在 Chrome 浏览器中登录抖音网页版 (douyin.com)');
+                  }
+                } else {
+                  // 未开启自动获取，询问用户
+                  const shouldAutoGet = await p.confirm({
+                    message: `是否自动从 ${getBrowserName()} 浏览器获取 Cookie？`,
+                    initialValue: true
                   });
 
-                  if (retryResult.success) {
-                    spinner.stop(`✓ 完成: ${retryResult.outputPath}`);
-                  } else {
-                    spinner.stop(`✗ 重试失败: ${retryResult.error}`);
+                  if (shouldAutoGet && !p.isCancel(shouldAutoGet)) {
+                    spinner.start('正在从浏览器获取 Cookie...');
+                    const cookieResult = await getDouyinCookiesFromChrome();
+
+                    if (cookieResult.success && cookieResult.cookies) {
+                      spinner.stop('✓ Cookie 获取成功');
+
+                      // 使用获取到的 Cookie 重试
+                      spinner.start('正在使用 Cookie 重试...');
+                      const retryResult = await extractText({
+                        url: currentUrl,
+                        outputFormat: format,
+                        outputDir: options.output,
+                        keepTempFiles: options.keep,
+                        cookies: cookieResult.cookies,
+                        modelName: options.model,
+                      });
+
+                      if (retryResult.success) {
+                        spinner.stop(`✓ 完成: ${retryResult.outputPath}`);
+                      } else {
+                        spinner.stop(`✗ 重试失败: ${retryResult.error}`);
+                      }
+                    } else {
+                      spinner.stop(`✗ ${cookieResult.error}`);
+                      p.log.info('请确保已在 Chrome 浏览器中登录抖音网页版 (douyin.com)');
+                    }
+                  }
+                }
+              } else {
+                // 不支持自动获取，提示手动输入
+                const shouldProvideCookie = await p.confirm({
+                  message: '是否现在提供Cookie？',
+                  initialValue: false
+                });
+
+                if (shouldProvideCookie && !p.isCancel(shouldProvideCookie)) {
+                  const cookieInput = await p.text({
+                    message: '请粘贴Cookie内容',
+                    placeholder: '粘贴从浏览器复制的Cookie...'
+                  });
+
+                  if (cookieInput && !p.isCancel(cookieInput)) {
+                    // 使用提供的Cookie重试
+                    spinner.start('正在使用Cookie重试...');
+                    const retryResult = await extractText({
+                      url: currentUrl,
+                      outputFormat: format,
+                      outputDir: options.output,
+                      keepTempFiles: options.keep,
+                      cookies: cookieInput as string,
+                      modelName: options.model,
+                    });
+
+                    if (retryResult.success) {
+                      spinner.stop(`✓ 完成: ${retryResult.outputPath}`);
+                    } else {
+                      spinner.stop(`✗ 重试失败: ${retryResult.error}`);
+                    }
                   }
                 }
               }
