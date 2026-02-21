@@ -1,22 +1,25 @@
 {
-  "name": "video2text",
+  "name": "@wangjs-jacky/video2text",
   "version": "1.1.0",
-  "description": "从抖音视频提取文案的工具 - 增强版（智能错误处理）",
+  "description": "从视频平台提取文案的 CLI 工具（支持抖音等平台，持续扩展中）",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "video2text": "./bin/video2text.ts"
+    "video2text": "./bin/video2text.cjs"
   },
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "tsc",
-    "cli": "tsx bin/video2text.ts"
+    "cli": "tsx bin/video2text.ts",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "douyin",
     "video",
     "transcribe",
-    "whisper"
+    "whisper",
+    "douyin",
+    "subtitle",
+    "speech-to-text"
   ],
   "author": "",
   "license": "MIT",

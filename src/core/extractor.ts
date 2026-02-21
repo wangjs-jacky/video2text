@@ -1,5 +1,5 @@
-import { unlink, writeFile, mkdir } from 'fs/promises';
-import { join, resolve, basename } from 'path';
+import { unlink, writeFile, mkdir, rename } from 'fs/promises';
+import { join, resolve, basename, dirname } from 'path';
 import { downloadVideo, DownloadError } from './downloader.js';
 import { extractAudio } from './audio-extractor.js';
 import { transcribe } from './transcriber.js';
@@ -16,11 +16,11 @@ export async function extractText(task: ExtractTask): Promise<ExtractResult> {
     await mkdir(tempDir, { recursive: true });
     await mkdir(absoluteOutputDir, { recursive: true });
 
-    // 1. 下载视频
+    // 1. 下载视频（保存到 output/[视频ID]/ 目录）
     console.log('正在下载视频...');
-    const { videoPath, title } = await downloadVideo({
+    const { videoPath, title, saveDir } = await downloadVideo({
       url: task.url,
-      outputDir: tempDir,
+      outputDir: absoluteOutputDir,
       cookies: task.cookies,
     });
 
@@ -42,16 +42,14 @@ export async function extractText(task: ExtractTask): Promise<ExtractResult> {
     // 4. 格式化输出
     const formattedOutput = formatResult(transcribeResult, task.outputFormat);
 
-    // 清理标题中的特殊字符
+    // 5. 将文案保存到视频同目录
     const safeTitle = title.replace(/[<>:"/\\|?*]/g, '_');
-    const outputPath = join(absoluteOutputDir, `${safeTitle}.${task.outputFormat}`);
-
-    // 5. 写入文件
+    const outputPath = join(saveDir, `${safeTitle}.${task.outputFormat}`);
     await writeFile(outputPath, formattedOutput, 'utf-8');
 
     // 6. 清理临时文件
     if (!task.keepTempFiles) {
-      await cleanup([videoPath, audioPath]);
+      await cleanup([audioPath]);
     }
 
     return {

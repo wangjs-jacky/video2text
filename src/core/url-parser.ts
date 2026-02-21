@@ -1,12 +1,15 @@
 /**
  * 智能URL解析器
- * 支持各种抖音链接格式的自动识别和转换
+ * 支持多平台视频链接格式的自动识别和转换
  */
+
+export type Platform = 'douyin' | 'bilibili' | 'unknown';
 
 export interface ParsedUrl {
   originalUrl: string;
   normalizedUrl: string;
   videoId: string | null;
+  platform: Platform;
   type: 'video' | 'user' | 'collection' | 'unknown';
   needsAuth: boolean;
   suggestion?: string;
@@ -15,7 +18,22 @@ export interface ParsedUrl {
 /**
  * 从各种URL格式中提取视频ID
  */
-export function extractVideoId(url: string): string | null {
+export function extractVideoId(url: string, platform: Platform): string | null {
+  if (platform === 'bilibili') {
+    // B站视频: https://www.bilibili.com/video/BV1VSFAz2EKS/
+    const bvMatch = url.match(/bilibili\.com\/video\/(BV[a-zA-Z0-9]+)/);
+    if (bvMatch) {
+      return bvMatch[1];
+    }
+    // B站短链接: https://b23.tv/xxx
+    const b23Match = url.match(/b23\.tv\/([a-zA-Z0-9]+)/);
+    if (b23Match) {
+      return b23Match[1];
+    }
+    return null;
+  }
+
+  // 抖音链接
   // 标准视频链接: https://www.douyin.com/video/7595594238893840886
   const videoMatch = url.match(/douyin\.com\/video\/(\d+)/);
   if (videoMatch) {
@@ -44,9 +62,30 @@ export function extractVideoId(url: string): string | null {
 }
 
 /**
+ * 检测平台
+ */
+export function detectPlatform(url: string): Platform {
+  if (url.includes('douyin.com') || url.includes('v.douyin.com')) {
+    return 'douyin';
+  }
+  if (url.includes('bilibili.com') || url.includes('b23.tv')) {
+    return 'bilibili';
+  }
+  return 'unknown';
+}
+
+/**
  * 判断URL类型
  */
-export function detectUrlType(url: string): ParsedUrl['type'] {
+export function detectUrlType(url: string, platform: Platform): ParsedUrl['type'] {
+  if (platform === 'bilibili') {
+    if (url.includes('/video/')) {
+      return 'video';
+    }
+    return 'unknown';
+  }
+
+  // 抖音
   if (url.includes('/video/') || url.includes('/note/')) {
     return 'video';
   }
@@ -69,7 +108,13 @@ export function detectUrlType(url: string): ParsedUrl['type'] {
 /**
  * 判断是否需要认证
  */
-export function needsAuthentication(url: string, type: ParsedUrl['type']): boolean {
+export function needsAuthentication(url: string, type: ParsedUrl['type'], platform: Platform): boolean {
+  if (platform === 'bilibili') {
+    // B站大部分视频不需要登录，部分会员视频需要
+    return false;
+  }
+
+  // 抖音
   // 收藏夹需要认证
   if (type === 'collection') {
     return true;
@@ -94,8 +139,18 @@ export function needsAuthentication(url: string, type: ParsedUrl['type']): boole
 export function generateSuggestion(
   type: ParsedUrl['type'],
   needsAuth: boolean,
-  videoId: string | null
+  videoId: string | null,
+  platform: Platform
 ): string | undefined {
+  if (platform === 'bilibili') {
+    if (type === 'unknown') {
+      return '无法识别的B站链接格式。请使用以下格式之一：\n' +
+             '- https://www.bilibili.com/video/BVxxx\n' +
+             '- https://b23.tv/xxx （B站短链接）';
+    }
+    return undefined;
+  }
+
   if (needsAuth) {
     if (type === 'collection') {
       return '检测到收藏夹链接。请按以下步骤操作：\n' +
@@ -103,7 +158,7 @@ export function generateSuggestion(
              '2. 点击分享按钮，复制视频链接\n' +
              '3. 使用复制的链接重新运行命令\n\n' +
              '或者提供Cookie：\n' +
-             'npm run cli extract "URL" --cookie "你的cookie"';
+             'video2text extract "URL" -c "你的cookie"';
     }
 
     if (videoId) {
@@ -113,7 +168,7 @@ export function generateSuggestion(
              '2. 点击分享，复制链接\n' +
              '3. 使用复制的链接重新运行\n\n' +
              '方案2：提供Cookie\n' +
-             'npm run cli extract "https://www.douyin.com/video/' + videoId + '" --cookie "你的cookie"\n\n' +
+             'video2text extract "https://www.douyin.com/video/' + videoId + '" -c "你的cookie"\n\n' +
              '获取Cookie的方法：\n' +
              '1. 浏览器登录抖音网页版\n' +
              '2. 按F12打开开发者工具\n' +
@@ -125,14 +180,15 @@ export function generateSuggestion(
 
   if (type === 'user') {
     return '检测到用户主页链接。请提供具体的视频链接，或使用视频ID：\n' +
-           'npm run cli extract "https://www.douyin.com/video/视频ID"';
+           'video2text extract "https://www.douyin.com/video/视频ID"';
   }
 
   if (type === 'unknown') {
     return '无法识别的链接格式。请使用以下格式之一：\n' +
            '- https://v.douyin.com/xxx/ （抖音分享链接）\n' +
            '- https://www.douyin.com/video/视频ID\n' +
-           '- 或直接从抖音APP复制分享链接';
+           '- https://www.bilibili.com/video/BVxxx （B站）\n' +
+           '- 或直接从APP复制分享链接';
   }
 
   return undefined;
@@ -141,8 +197,13 @@ export function generateSuggestion(
 /**
  * 标准化URL
  */
-export function normalizeUrl(url: string, videoId: string | null): string {
-  // 如果已经有视频ID且不是标准格式，转换为标准格式
+export function normalizeUrl(url: string, videoId: string | null, platform: Platform): string {
+  if (platform === 'bilibili') {
+    // B站链接已经是标准格式，直接返回
+    return url;
+  }
+
+  // 抖音：如果已经有视频ID且不是标准格式，转换为标准格式
   if (videoId && !url.includes('/video/')) {
     return `https://www.douyin.com/video/${videoId}`;
   }
@@ -151,23 +212,33 @@ export function normalizeUrl(url: string, videoId: string | null): string {
 }
 
 /**
- * 智能解析抖音URL
+ * 智能解析视频URL（支持多平台）
  */
-export function parseDouyinUrl(originalUrl: string): ParsedUrl {
-  const videoId = extractVideoId(originalUrl);
-  const type = detectUrlType(originalUrl);
-  const needsAuth = needsAuthentication(originalUrl, type);
-  const normalizedUrl = normalizeUrl(originalUrl, videoId);
-  const suggestion = generateSuggestion(type, needsAuth, videoId);
+export function parseVideoUrl(originalUrl: string): ParsedUrl {
+  const platform = detectPlatform(originalUrl);
+  const videoId = extractVideoId(originalUrl, platform);
+  const type = detectUrlType(originalUrl, platform);
+  const needsAuth = needsAuthentication(originalUrl, type, platform);
+  const normalizedUrl = normalizeUrl(originalUrl, videoId, platform);
+  const suggestion = generateSuggestion(type, needsAuth, videoId, platform);
 
   return {
     originalUrl,
     normalizedUrl,
     videoId,
+    platform,
     type,
     needsAuth,
     suggestion
   };
+}
+
+/**
+ * 智能解析抖音URL（兼容旧接口）
+ * @deprecated 请使用 parseVideoUrl
+ */
+export function parseDouyinUrl(originalUrl: string): ParsedUrl {
+  return parseVideoUrl(originalUrl);
 }
 
 /**
@@ -179,17 +250,17 @@ export function validateAndSuggest(url: string): {
   error?: string;
   solution?: string;
 } {
-  const parsedUrl = parseDouyinUrl(url);
+  const parsedUrl = parseVideoUrl(url);
 
-  // 检查是否是抖音链接
-  if (!url.includes('douyin.com')) {
+  // 检查是否是支持的平台
+  if (parsedUrl.platform === 'unknown') {
     return {
       valid: false,
       parsedUrl,
-      error: '不是有效的抖音链接',
-      solution: '请提供抖音视频链接，例如：\n' +
-                '- https://v.douyin.com/xxx/\n' +
-                '- https://www.douyin.com/video/视频ID'
+      error: '不支持的平台',
+      solution: '目前支持以下平台：\n' +
+                '- 抖音：https://v.douyin.com/xxx/ 或 https://www.douyin.com/video/xxx\n' +
+                '- B站：https://www.bilibili.com/video/BVxxx 或 https://b23.tv/xxx'
     };
   }
 
