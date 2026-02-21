@@ -1,15 +1,23 @@
 # Video2Text
 
-A professional tool for automatically extracting text content from Douyin videos, supporting both CLI and Web interfaces.
+A professional CLI tool for automatically extracting text content from videos, supporting multiple platforms.
 
 [中文文档](./README_CN.md)
 
+## Supported Platforms
+
+| Platform | Status |
+|----------|--------|
+| Douyin (抖音) | ✅ Supported |
+| Bilibili (B站) | ✅ Supported |
+| More... | 🚧 Coming soon |
+
 ## Features
 
-- Auto-download Douyin videos
-- AI-powered speech recognition transcription
+- Multi-platform support (Douyin, Bilibili)
+- AI-powered speech recognition transcription (Whisper)
 - Multiple output formats: TXT, SRT, VTT, Markdown
-- CLI and Web interface
+- CLI and Web API interfaces
 - Batch processing support
 - Local processing for privacy protection
 
@@ -47,6 +55,7 @@ choco install yt-dlp ffmpeg
 git clone https://github.com/wangjs-jacky/video2text.git
 cd video2text
 npm install
+npm link  # Link video2text command globally
 ```
 
 ### 3. Download Whisper Model
@@ -63,16 +72,19 @@ cd -
 
 ```bash
 # Basic usage
-npm run cli extract https://v.douyin.com/xxx/
+video2text extract https://v.douyin.com/xxx/
+
+# Bilibili video
+video2text extract https://www.bilibili.com/video/BVxxx/
 
 # Specify format and output
-npm run cli extract https://v.douyin.com/xxx/ -f srt -o ./subs
+video2text extract https://v.douyin.com/xxx/ -f srt -o ./subs
 
 # Batch processing
-npm run cli extract --file links.txt
+video2text extract --file links.txt
 
 # Start web server
-npm run cli serve --port 3000
+video2text serve --port 3000
 ```
 
 ### API
@@ -88,10 +100,12 @@ curl -X POST http://localhost:3000/api/extract \
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `--format` | txt | Output format (txt/srt/vtt/md) |
-| `--output` | ./output | Output directory |
-| `--model` | base | Whisper model (tiny/base/small/medium/large-v3) |
-| `--cookie` | - | Douyin cookie for login-required videos |
+| `-f, --format` | txt | Output format (txt/srt/vtt/md) |
+| `-o, --output` | ./output | Output directory |
+| `-m, --model` | base | Whisper model (tiny/base/small/medium/large-v3) |
+| `-k, --keep` | false | Keep temporary files |
+| `-c, --cookie` | - | Cookie for login-required videos |
+| `--file` | - | File containing video URLs |
 
 ## Tech Stack
 

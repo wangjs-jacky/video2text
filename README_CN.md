@@ -1,16 +1,24 @@
-# Video2Text - 抖音视频文案提取工具
+# Video2Text - 视频文案提取工具
 
-从抖音视频自动提取文字内容的专业工具，支持 CLI 命令行和 Web 界面两种使用方式。
+从视频平台自动提取文字内容的专业 CLI 工具，支持多平台。
 
 [English](./README.md)
 
+## 支持平台
+
+| 平台 | 状态 |
+|------|------|
+| 抖音 | ✅ 已支持 |
+| B站 | ✅ 已支持 |
+| 更多... | 🚧 开发中 |
+
 ## 功能特性
 
-- 支持抖音视频链接自动下载
-- 使用 AI 语音识别技术转录视频内容
-- 支持多种输出格式: TXT、SRT、VTT、Markdown
-- 提供 CLI 命令行和 Web 界面两种使用方式
-- 支持批量处理多个视频
+- 多平台支持（抖音、B站）
+- AI 语音识别转录（Whisper）
+- 多种输出格式: TXT、SRT、VTT、Markdown
+- CLI 命令行和 Web API 两种使用方式
+- 批量处理支持
 - 本地处理，保护隐私安全
 
 ## 系统要求
@@ -47,6 +55,7 @@ choco install yt-dlp ffmpeg
 git clone https://github.com/wangjs-jacky/video2text.git
 cd video2text
 npm install
+npm link  # 全局链接 video2text 命令
 ```
 
 ### 3. 下载 Whisper 模型
@@ -62,17 +71,20 @@ cd -
 ### CLI 命令行
 
 ```bash
-# 基本用法
-npm run cli extract https://v.douyin.com/xxx/
+# 基本用法（抖音）
+video2text extract https://v.douyin.com/xxx/
+
+# B站视频
+video2text extract https://www.bilibili.com/video/BVxxx/
 
 # 指定格式和输出目录
-npm run cli extract https://v.douyin.com/xxx/ -f srt -o ./subs
+video2text extract https://v.douyin.com/xxx/ -f srt -o ./subs
 
 # 批量处理
-npm run cli extract --file links.txt
+video2text extract --file links.txt
 
 # 启动 Web 服务
-npm run cli serve --port 3000
+video2text serve --port 3000
 ```
 
 ### API 接口
@@ -86,12 +98,14 @@ curl -X POST http://localhost:3000/api/extract \
 
 ## 参数说明
 
-| 参数 | 默认值 | 说明 |
-|------|--------|------|
-| `--format` | txt | 输出格式 (txt/srt/vtt/md) |
-| `--output` | ./output | 输出目录 |
-| `--model` | base | Whisper 模型 |
-| `--cookie` | - | 抖音 Cookie |
+| 参数 | 简写 | 默认值 | 说明 |
+|------|------|--------|------|
+| `--format` | `-f` | txt | 输出格式 (txt/srt/vtt/md) |
+| `--output` | `-o` | ./output | 输出目录 |
+| `--model` | `-m` | base | Whisper 模型 |
+| `--keep` | `-k` | false | 保留临时文件 |
+| `--cookie` | `-c` | - | 登录视频所需 Cookie |
+| `--file` | - | - | 包含视频链接的文件 |
 
 ## 技术栈
 
