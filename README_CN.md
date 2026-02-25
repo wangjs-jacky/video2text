@@ -1,5 +1,8 @@
 # Video2Text - 视频文案提取工具
 
+[![npm version](https://img.shields.io/npm/v/@wangjs-jacky/video2text.svg)](https://www.npmjs.com/package/@wangjs-jacky/video2text)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 从视频平台自动提取文字内容的专业 CLI 工具，支持多平台。
 
 [English](./README.md)
@@ -30,7 +33,24 @@
 
 ## 安装
 
-### 1. 安装系统依赖
+### 快速安装（推荐）
+
+```bash
+# 通过 npm 全局安装
+npm install -g @wangjs-jacky/video2text
+
+# 下载 Whisper 模型（首次使用必须执行）
+npx whisper-node-download
+```
+
+或手动下载模型：
+
+```bash
+cd $(npm root -g)/@wangjs-jacky/video2text/node_modules/whisper-node/lib/whisper.cpp/models
+bash download-ggml-model.sh base
+```
+
+### 安装系统依赖
 
 **macOS:**
 ```bash
@@ -49,18 +69,15 @@ sudo apt install ffmpeg
 choco install yt-dlp ffmpeg
 ```
 
-### 2. 安装项目依赖
+### 从源码安装
 
 ```bash
 git clone https://github.com/wangjs-jacky/video2text.git
 cd video2text
 npm install
-npm link  # 全局链接 video2text 命令
-```
+npm link
 
-### 3. 下载 Whisper 模型
-
-```bash
+# 下载 Whisper 模型
 cd node_modules/whisper-node/lib/whisper.cpp/models
 bash download-ggml-model.sh base
 cd -
@@ -98,14 +115,14 @@ curl -X POST http://localhost:3000/api/extract \
 
 ## 参数说明
 
-| 参数 | 简写 | 默认值 | 说明 |
-|------|------|--------|------|
-| `--format` | `-f` | txt | 输出格式 (txt/srt/vtt/md) |
-| `--output` | `-o` | ./output | 输出目录 |
-| `--model` | `-m` | base | Whisper 模型 |
-| `--keep` | `-k` | false | 保留临时文件 |
-| `--cookie` | `-c` | - | 登录视频所需 Cookie |
-| `--file` | - | - | 包含视频链接的文件 |
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `-f, --format` | txt | 输出格式 (txt/srt/vtt/md) |
+| `-o, --output` | ./output | 输出目录 |
+| `-m, --model` | base | Whisper 模型 (tiny/base/small/medium/large-v3) |
+| `-k, --keep` | false | 保留临时文件 |
+| `-c, --cookie` | - | 登录视频所需 Cookie |
+| `--file` | - | 包含视频链接的文件 |
 
 ## 技术栈
 

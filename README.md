@@ -1,5 +1,8 @@
 # Video2Text
 
+[![npm version](https://img.shields.io/npm/v/@wangjs-jacky/video2text.svg)](https://www.npmjs.com/package/@wangjs-jacky/video2text)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A professional CLI tool for automatically extracting text content from videos, supporting multiple platforms.
 
 [中文文档](./README_CN.md)
@@ -30,7 +33,24 @@ A professional CLI tool for automatically extracting text content from videos, s
 
 ## Installation
 
-### 1. Install System Dependencies
+### Quick Install (Recommended)
+
+```bash
+# Install globally via npm
+npm install -g @wangjs-jacky/video2text
+
+# Download Whisper model (required for first-time use)
+npx whisper-node-download
+```
+
+Or manually download the model:
+
+```bash
+cd $(npm root -g)/@wangjs-jacky/video2text/node_modules/whisper-node/lib/whisper.cpp/models
+bash download-ggml-model.sh base
+```
+
+### Install System Dependencies
 
 **macOS:**
 ```bash
@@ -49,18 +69,15 @@ sudo apt install ffmpeg
 choco install yt-dlp ffmpeg
 ```
 
-### 2. Install Project Dependencies
+### Install from Source
 
 ```bash
 git clone https://github.com/wangjs-jacky/video2text.git
 cd video2text
 npm install
-npm link  # Link video2text command globally
-```
+npm link
 
-### 3. Download Whisper Model
-
-```bash
+# Download Whisper model
 cd node_modules/whisper-node/lib/whisper.cpp/models
 bash download-ggml-model.sh base
 cd -
